@@ -3,6 +3,9 @@ package com.library.kodillalibrary.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,37 +19,45 @@ public class Reader {
 
 
     @Id
-    @NonNull
+    @NotNull
     @Column(name = "ID", unique = true)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long readerId;
 
     @Column(name = "FIRST_NAME")
-    @NonNull
+    @NotNull
     private String firstName;
 
     @Column(name = "LAST_NAME")
-    @NonNull
+    @NotNull
     private String lastName;
 
     @Column(name = "REGISTRATION_DATE")
-    @NonNull
-    private Date registrationDate;
+    @NotNull
+    private LocalDate registrationDate;
 
 
     @OneToMany(
             targetEntity = Rent.class,
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             mappedBy = "reader")
-    private List<Rent> readerRentList;
+    private List<Rent> readerRentList=new ArrayList<>();
 
-
-
-    public Reader(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.registrationDate = new Date();
+    public void addRentForReader(Rent rent){
+        readerRentList.add(rent);
     }
 
+    public Reader(String firstName, String lastName, LocalDate registrationDate) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.registrationDate = registrationDate;
+    }
+
+    public Reader(Long readerId, String firstName, String lastName, LocalDate registrationDate) {
+        this.readerId = readerId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.registrationDate = registrationDate;
+    }
 }

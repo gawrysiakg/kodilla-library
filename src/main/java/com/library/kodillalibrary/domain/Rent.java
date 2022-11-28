@@ -2,6 +2,7 @@ package com.library.kodillalibrary.domain;
 
 import lombok.*;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @NoArgsConstructor
@@ -13,19 +14,19 @@ import java.time.LocalDate;
 public class Rent {
 
     @Id
-    @NonNull
+    @NotNull
     @Column(name = "ID", unique = true)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long rentId;
+    private Long id;
 
 
     @Column(name = "RENTAL_DATE")
-    @NonNull
+   // @NotNull
     private LocalDate rentalDate;
 
 
     @Column(name = "RETURN_DATE")
-    @NonNull
+    //@NotNull
     private LocalDate returnDate;
 
 
@@ -48,9 +49,5 @@ public class Rent {
 
 
 
-
-//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    @JoinColumn(name = "BOOK_ID")
-//    private Book book;
 
 }

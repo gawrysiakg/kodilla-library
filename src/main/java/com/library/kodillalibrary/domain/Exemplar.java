@@ -3,27 +3,28 @@ package com.library.kodillalibrary.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-
+import lombok.Setter;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "EXEMPLARS")
 public class Exemplar {
 
 
     @Id
-    @NonNull
+    @NotNull
     @Column(name = "ID", unique = true)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Enumerated(EnumType.STRING)  //ORDINAL
     @Column(name= "STATUS")
-    private BookStatus status; // =status.AVAILABLE;
+    private BookStatus status;
 
 
     @ManyToOne(
@@ -32,12 +33,13 @@ public class Exemplar {
     @JoinColumn(name= "TITLES_ID")
     private Title title;
 
-    @OneToOne
-    @JoinColumn(name = "BOOK_RENTS_ID")
-    private Rent rent;
+//    @OneToMany
+//    @JoinColumn(name = "BOOK_RENTS_ID")
+//    private Rent rent;
 
-//    public Exemplar(Title title) {
-//        this.title = title;
-//    }
+    public Exemplar(Title title, BookStatus status) {
+        this.title = title;
+        this.status = status;
+    }
 
 }

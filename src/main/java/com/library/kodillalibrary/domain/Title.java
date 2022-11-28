@@ -2,6 +2,7 @@ package com.library.kodillalibrary.domain;
 
 import lombok.*;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,31 +16,31 @@ import java.util.Objects;
 public class Title {
 
     @Id
-    @NonNull
+    @NotNull
     @Column(name = "ID", unique = true)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
 
     @Column(name="TITLE")
-    @NonNull
+    @NotNull
     private String title;
 
 
     @Column(name="AUTHOR")
-    @NonNull
+    @NotNull
     private String author;
 
 
     @Column(name="PUBLICATION_YEAR")
-    @NonNull
+    @NotNull
     private int year;
 
     @OneToMany(
             targetEntity = Exemplar.class,
             mappedBy = "title",
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     private List<Exemplar> exemplars = new ArrayList<>();
 
@@ -50,7 +51,16 @@ public class Title {
         this.year = year;
     }
 
+    public Title(Long id, String title, String author, int year) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.year = year;
+    }
 
+    public void addExemplar(Exemplar exemplar) {
+        exemplars.add(exemplar);
+    }
 
 
     @Override
@@ -66,7 +76,5 @@ public class Title {
         return Objects.hash(id, title, author, year);
     }
 
-    public void addExemplar(Exemplar exemplar) {
-        exemplars.add(exemplar);
-    }
+
 }

@@ -1,12 +1,9 @@
 package com.library.kodillalibrary.domain.dto;
 
-import com.library.kodillalibrary.domain.Rent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +12,6 @@ public class ReaderDto {
     private Long readerId;
     private String firstName;
     private String lastName;
-    private Date registrationDate;
-    private List<Rent> readerRentList;
+    private LocalDate registrationDate;
 
 }
