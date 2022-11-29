@@ -2,16 +2,13 @@ package com.library.kodillalibrary.controller;
 
 import com.library.kodillalibrary.controller.exceptions.ExemplarNotFoundException;
 import com.library.kodillalibrary.controller.exceptions.ReaderNotFoundException;
+import com.library.kodillalibrary.controller.exceptions.RentedExemplarException;
 import com.library.kodillalibrary.domain.*;
 import com.library.kodillalibrary.domain.dto.RentDto;
-import com.library.kodillalibrary.mapper.ExemplarMapper;
-import com.library.kodillalibrary.mapper.ReaderMapper;
 import com.library.kodillalibrary.mapper.RentMapper;
-import com.library.kodillalibrary.mapper.TitleMapper;
 import com.library.kodillalibrary.service.ExemplarDbService;
 import com.library.kodillalibrary.service.ReaderDbService;
 import com.library.kodillalibrary.service.RentDbService;
-import com.library.kodillalibrary.service.TitleDbService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,21 +26,21 @@ public class RentController {
     private final RentDbService rentDbService;
     private final RentMapper rentMapper;
     private final ReaderDbService readerDbService;
-    private final ReaderMapper readerMapper;
-    private final TitleDbService titleDbService;
-    private final TitleMapper titleMapper;
     private final ExemplarDbService exemplarDbService;
-    private final ExemplarMapper exemplarMapper;
 
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> createRent(@RequestBody RentDto rentDto) throws ReaderNotFoundException, ExemplarNotFoundException {
+    public ResponseEntity<Void> createRent(@RequestBody RentDto rentDto) throws ReaderNotFoundException, ExemplarNotFoundException, RentedExemplarException {
         Reader reader = readerDbService.getReader(rentDto.getReaderId());
         Exemplar exemplar = exemplarDbService.getExemplar(rentDto.getExemplarId());
-        exemplar.setStatus(BookStatus.RENTED);
-        Rent rent = rentMapper.mapToRent(rentDto, reader, exemplar);
-        rent.setRentalDate(LocalDate.now());
-        rentDbService.saveRent(rent);
+        if(exemplar.getStatus().equals(BookStatus.RENTED)){
+            throw new RentedExemplarException();
+           } else {
+            exemplar.setStatus(BookStatus.RENTED);
+            RentDto updatedDto = new RentDto(rentDto.getRentId(), LocalDate.now(), null, rentDto.getReaderId(), rentDto.getExemplarId());
+            Rent rent = rentMapper.mapToRent(updatedDto, reader, exemplar);
+            rentDbService.saveRent(rent);
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -58,6 +55,7 @@ public class RentController {
         rentDbService.saveRent(rent);
         return ResponseEntity.ok().build();
     }
+
 
     @GetMapping
     public ResponseEntity <List<RentDto>> getRents(){

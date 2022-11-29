@@ -27,7 +27,7 @@ public class Rent {
 
     @Column(name = "RETURN_DATE")
     //@NotNull
-    private LocalDate returnDate;
+    private LocalDate returnDate=null;
 
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

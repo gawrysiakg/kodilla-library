@@ -25,5 +25,10 @@ public class GlobalHttpErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>("Reader with given id doesn't exist", HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RentedExemplarException.class)
+    public ResponseEntity<Object> handleRentedExemplarException(RentedExemplarException exception){
+        return new ResponseEntity<>("This exemplar is rented", HttpStatus.BAD_REQUEST);
+    }
+
 
 }

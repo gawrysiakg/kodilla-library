@@ -3,12 +3,9 @@ package com.library.kodillalibrary.controller;
 
 import com.library.kodillalibrary.controller.exceptions.ExemplarNotFoundException;
 import com.library.kodillalibrary.controller.exceptions.TitleNotFoundException;
-import com.library.kodillalibrary.domain.BookStatus;
 import com.library.kodillalibrary.domain.Exemplar;
-import com.library.kodillalibrary.domain.Reader;
 import com.library.kodillalibrary.domain.Title;
 import com.library.kodillalibrary.domain.dto.ExemplarDto;
-import com.library.kodillalibrary.domain.dto.ReaderDto;
 import com.library.kodillalibrary.mapper.ExemplarMapper;
 import com.library.kodillalibrary.service.ExemplarDbService;
 import com.library.kodillalibrary.service.TitleDbService;
@@ -32,9 +29,11 @@ public class ExemplarController {
         Title title = titleDbService.getTitle(exemplarDto.getTitleId());
         Exemplar exemplar = exemplarMapper.mapToExemplar(exemplarDto, title);
         exemplar.setTitle(title);
-        exemplar.setStatus(BookStatus.AVAILABLE);
+        exemplar.setStatus(exemplarDto.getStatus());
+        //exemplar.setStatus(BookStatus.AVAILABLE);
         exemplarDbService.saveExemplar(exemplar);
         title.getExemplars().add(exemplar);
+        titleDbService.saveTitle(title);
         return ResponseEntity.ok().build();
     }
 
