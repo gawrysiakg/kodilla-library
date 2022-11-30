@@ -1,8 +1,6 @@
 package com.library.kodillalibrary.controller;
 
-import com.library.kodillalibrary.controller.exceptions.ExemplarNotFoundException;
-import com.library.kodillalibrary.controller.exceptions.ReaderNotFoundException;
-import com.library.kodillalibrary.controller.exceptions.RentedExemplarException;
+import com.library.kodillalibrary.controller.exceptions.*;
 import com.library.kodillalibrary.domain.*;
 import com.library.kodillalibrary.domain.dto.RentDto;
 import com.library.kodillalibrary.mapper.RentMapper;
@@ -35,26 +33,35 @@ public class RentController {
         Exemplar exemplar = exemplarDbService.getExemplar(rentDto.getExemplarId());
         if(exemplar.getStatus().equals(BookStatus.RENTED)){
             throw new RentedExemplarException();
-           } else {
+           }
             exemplar.setStatus(BookStatus.RENTED);
-            RentDto updatedDto = new RentDto(rentDto.getRentId(), LocalDate.now(), null, rentDto.getReaderId(), rentDto.getExemplarId());
-            Rent rent = rentMapper.mapToRent(updatedDto, reader, exemplar);
+            Rent rent = rentMapper.mapToRent(rentDto, reader, exemplar);
+            rent.setExemplar(exemplar);
+            rent.setRentalDate(LocalDate.now());
+            rent.setReturnDate(null);
+            exemplarDbService.saveExemplar(exemplar);
             rentDbService.saveRent(rent);
-        }
+            reader.getReaderRentList().add(rent);
+            readerDbService.saveReader(reader);
+
         return ResponseEntity.ok().build();
     }
+
+
 
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> closeRent(@RequestBody RentDto rentDto) throws ReaderNotFoundException, ExemplarNotFoundException {
+    public ResponseEntity<Void> closeRent(@RequestBody RentDto rentDto) throws ReaderNotFoundException, ExemplarNotFoundException, RentNotFoundException {
         Reader reader = readerDbService.getReader(rentDto.getReaderId());
         Exemplar exemplar = exemplarDbService.getExemplar(rentDto.getExemplarId());
         exemplar.setStatus(BookStatus.AVAILABLE);
-        Rent rent = rentMapper.mapToRent(rentDto, reader, exemplar);
-        rent.setReturnDate(LocalDate.now());
-        rentDbService.saveRent(rent);
+       Rent rentFromDb = rentDbService.getRent(rentDto.getRentId());
+        rentFromDb.setReturnDate(LocalDate.now());
+        rentDbService.saveRent(rentFromDb);
         return ResponseEntity.ok().build();
     }
+
+
 
 
     @GetMapping
@@ -63,4 +70,13 @@ public class RentController {
         return ResponseEntity.ok(rentMapper.mapToRentDtoList(rents));
     }
 
+
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity <List<RentDto>> getReaderRents(@PathVariable("id") Long id) throws ReaderNotFoundException {
+       Reader reader =  readerDbService.getReader(id);
+        List<Rent> readerRentList = reader.getReaderRentList();
+        return ResponseEntity.ok(rentMapper.mapToRentDtoList(readerRentList));
+    }
 }

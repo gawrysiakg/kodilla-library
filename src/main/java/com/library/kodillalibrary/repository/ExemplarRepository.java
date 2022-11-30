@@ -12,4 +12,7 @@ public interface ExemplarRepository extends CrudRepository<Exemplar, Long> {
 
     @Override
     Optional<Exemplar> findById(Long id);
+
+    @Override
+    Exemplar save(Exemplar exemplar);
 }

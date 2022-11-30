@@ -33,13 +33,20 @@ public class Exemplar {
     @JoinColumn(name= "TITLES_ID")
     private Title title;
 
-//    @OneToMany
-//    @JoinColumn(name = "BOOK_RENTS_ID")
-//    private Rent rent;
+    @OneToOne
+    @JoinColumn(name = "BOOK_RENTS_ID")
+    private Rent rent= null;
 
     public Exemplar(Title title, BookStatus status) {
         this.title = title;
         this.status = status;
+    }
+
+    public Exemplar(Title title, BookStatus status, Rent rent) {
+        this.title = title;
+        this.status = status;
+        this.rent = rent;
+
     }
 
 }

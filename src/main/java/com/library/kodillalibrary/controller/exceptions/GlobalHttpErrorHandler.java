@@ -30,5 +30,9 @@ public class GlobalHttpErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>("This exemplar is rented", HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RentNotFoundException.class)
+    public ResponseEntity<Object> handleRentNotFoundException(RentNotFoundException exception){
+        return new ResponseEntity<>("This rent don't exist", HttpStatus.BAD_REQUEST);
+    }
 
 }

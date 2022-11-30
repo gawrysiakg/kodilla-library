@@ -1,6 +1,7 @@
 package com.library.kodillalibrary.mapper;
 
 import com.library.kodillalibrary.domain.Exemplar;
+import com.library.kodillalibrary.domain.Rent;
 import com.library.kodillalibrary.domain.Title;
 import com.library.kodillalibrary.domain.dto.ExemplarDto;
 import org.springframework.stereotype.Service;
@@ -9,11 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Service
 public class ExemplarMapper {
-    public Exemplar mapToExemplar(final ExemplarDto exemplarDto, final Title title) {
+    public Exemplar mapToExemplar(final ExemplarDto exemplarDto, final Title title, Rent rent) {
         return new Exemplar(
                 exemplarDto.getId(),
                 exemplarDto.getStatus(),
-                title
+                title,
+                rent
                 );
     }
 

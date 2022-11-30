@@ -1,5 +1,8 @@
 package com.library.kodillalibrary.service;
 
+import com.library.kodillalibrary.controller.exceptions.ExemplarNotFoundException;
+import com.library.kodillalibrary.controller.exceptions.RentNotFoundException;
+import com.library.kodillalibrary.domain.Exemplar;
 import com.library.kodillalibrary.domain.Rent;
 import com.library.kodillalibrary.repository.RentRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +22,9 @@ public class RentDbService {
 
     public Rent saveRent(final Rent rent) {
         return rentRepository.save(rent);
+    }
+
+    public Rent getRent(final Long rentId) throws RentNotFoundException {
+        return rentRepository.findById(rentId).orElseThrow(RentNotFoundException::new);
     }
 }
